@@ -1,0 +1,44 @@
+apply plugin: 'com.android.application'
+
+def cfg = rootProject.ext.android
+def appId = rootProject.ext.appId
+
+android {
+    compileSdkVersion cfg.compileSdkVersion
+    defaultConfig {
+        applicationId "com.androidwind.router.sample"
+        applicationId appId.app
+        minSdkVersion cfg.minSdkVersion
+        targetSdkVersion cfg.targetSdkVersion
+        versionCode cfg.versionCode
+        versionName cfg.versionName
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = [moduleName: project.getName()]
+            }
+        }
+    }
+    resourcePrefix "app_"
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    lintOptions {
+        abortOnError false
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+
+    annotationProcessor project(':router-compiler')
+    implementation project(':router-base')
+    if (!useModule.toBoolean()) {
+        implementation project(':module_main')
+        implementation project(':module_login')
+    }
+}
